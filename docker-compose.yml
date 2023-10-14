@@ -1,0 +1,36 @@
+version: "3.8"
+services:
+  postgresql-db:
+    image: postgres
+    restart: always
+    container_name: postgresql-db-data
+    volumes:
+      - ./data:/var/lib/postgresql
+    environment:
+      POSTGRES_PASSWORD: diego12345
+      POSTGRES_USER: postgres
+      POSTGRES_DB: sulab
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: ./Backend
+    depends_on:
+      - postgresql-db
+    ports:
+      - "8091:8081"  # Redireccionar el puerto 8091 del host al puerto 8081 del contenedor
+    networks:
+      - a_default  # Conectarse a la red definida "a_default"
+
+  frontend:
+    build: ./Frontend
+    container_name: a-frontend
+    ports:
+      - "3000:3000"  # Redireccionar el puerto 3000 del host al puerto 3000 del contenedor
+    networks:
+      - a_default  # Conectarse a la red definida "a_default"
+
+networks:
+  a_default:
+
+
